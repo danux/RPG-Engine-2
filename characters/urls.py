@@ -1,9 +1,8 @@
-# ~*~ coding: utf ~*~
+# -*- coding: utf -*-
 """
-URLs for the auth app.
+URLs for the characters app.
 """
 from django.conf.urls import patterns, url
-
 from characters.views import CharacterCreateView, CharacterListView
 
 

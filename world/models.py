@@ -1,4 +1,4 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 World models. These models define the game universe and are reference by all
 other aspects of the game.

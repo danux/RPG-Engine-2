@@ -1,10 +1,9 @@
-# ~*~ coding: utf ~*~
+# -*- coding: utf -*-
 """
 URLs for the auth app.
 """
 from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
-
 from rpg_auth.views import UserCreateView, ActivateFormView
 
 

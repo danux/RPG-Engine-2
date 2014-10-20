@@ -1,11 +1,10 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 Tests that user can create characters.
 """
 from django import forms
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView
-
 from characters.tests.utils import CharacterUtils
 from characters.views import CharacterCreateView
 from rpg_auth.tests.utils import CreateUserMixin

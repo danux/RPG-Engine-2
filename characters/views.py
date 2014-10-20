@@ -1,14 +1,12 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 Views related to managing characters.
 """
 from braces.views import LoginRequiredMixin
-
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.functional import lazy
 from django.views.generic import CreateView, ListView
-
 from characters.models import Character
 
 

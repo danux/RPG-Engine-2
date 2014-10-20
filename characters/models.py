@@ -1,11 +1,10 @@
-# ~*~ coding: utf ~*~
+# -*- coding: utf -*-
 """
 Characters are owned by users and participate within the game.
 """
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
-
 from world.models import Race, Location
 
 

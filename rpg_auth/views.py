@@ -1,4 +1,4 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 Views for the auth app.
 """

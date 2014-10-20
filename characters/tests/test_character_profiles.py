@@ -1,14 +1,11 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 A character profile is associated to a user and provides meta data about their characters
 and their options regarding characters.
 """
-from django.contrib.auth import get_user_model
-from django.test import TestCase
-from characters.models import CharacterProfile, Character
+from characters.models import CharacterProfile
 from characters.tests.utils import CharacterUtils
 from rpg_auth.tests.utils import CreateUserMixin
-from world.models import Location, Race
 
 
 class CharacterProfileCreation(CreateUserMixin):

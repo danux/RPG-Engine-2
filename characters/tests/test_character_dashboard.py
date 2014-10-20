@@ -1,11 +1,10 @@
-# ~*~ coding: utf-8 ~*~
+# -*- coding: utf-8 -*-
 """
 Tests that the character dashboard renders
 """
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.views.generic import ListView
-
 from characters.tests.utils import CharacterUtils
 from characters.views import CharacterListView
 from rpg_auth.tests.utils import CreateUserMixin
