@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rpg_auth',
+    'world',
+    'characters',
 )
 
 MIDDLEWARE_CLASSES = (

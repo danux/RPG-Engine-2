@@ -17,6 +17,7 @@ class RpgUserManager(BaseUserManager):
     """
     Custom manager for the SoJ User.
     """
+
     def _create_user(self, email, password, **extra_fields):
         """
         Creates and saves a User with the given username, email and password.
@@ -53,6 +54,7 @@ class RpgUser(AbstractBaseUser):
     """
     The user class.
     """
+
     pen_name = models.CharField(unique=True, db_index=True, max_length=30)
     email = models.EmailField(unique=True, db_index=True)
     is_active = models.BooleanField(default=False)
@@ -70,17 +72,6 @@ class RpgUser(AbstractBaseUser):
         """
         self.activation_key = uuid.uuid1()
 
-    def send_welcome_email(self, request):
-        """
-        Sends the welcome email and activation key to the user.
-
-        :type request: HttpRequest
-        """
-        context = {
-            'user': self,
-        }
-        self.email_user(request, _(u'Welcome to SoJ!'), u'rpg_auth/email/activation_email.txt', context)
-
     def email_user(self, request, subject, template, context, from_email=None, **kwargs):
         """
         Sends an email to this User.
@@ -97,13 +88,23 @@ class RpgUser(AbstractBaseUser):
         :type from_email: unicode
         :type kwargs: {}
         """
-        # Make domain and protocol available to all emails.
         current_site = get_current_site(request)
         context['domain'] = current_site.domain
         context['protocol'] = 'https' if request.is_secure() else 'http',
 
         message = render_to_string(template, context)
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def send_welcome_email(self, request):
+        """
+        Sends the welcome email and activation key to the user.
+
+        :type request: HttpRequest
+        """
+        context = {
+            'user': self,
+        }
+        self.email_user(request, _(u'Welcome to SoJ!'), u'rpg_auth/email/activation_email.txt', context)
 
     def activate(self, request):
         """
