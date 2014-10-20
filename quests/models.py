@@ -3,6 +3,7 @@
 Models for the quests app. These models serve as the heart of the game mechanics, drawing
 on all other apps to create the game.
 """
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models, IntegrityError
 from django.utils import timezone
 from characters.models import Character
@@ -38,8 +39,8 @@ class Quest(BaseWorldModel):
         Gets the current Location by the one with the most recent date_created.
         """
         try:
-            return self.questlocation_set.all().order_by('-date_created')[0]
-        except IndexError:
+            return self.questlocation_set.get(date_departed__isnull=True)
+        except ObjectDoesNotExist:
             return None
 
     def move_to_location(self, location):
@@ -67,7 +68,7 @@ class Quest(BaseWorldModel):
         Adds a character to a quest.
         """
         if character in self.current_characters:
-            raise IntegrityError()
+            raise IntegrityError('Character is already on quest')
         QuestCharacter.objects.create(
             quest=self,
             character=character,
