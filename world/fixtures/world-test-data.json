@@ -43,5 +43,17 @@
         "date_created": "2014-01-01 00:00:00",
         "date_modified": "2014-01-01 00:00:00"
     }
+  },
+  {
+    "model": "world.Location",
+    "pk": 2,
+    "fields": {
+        "name": "Location Two",
+        "slug": "location-two",
+        "description": "The second location on Continent One",
+        "continent": 2,
+        "date_created": "2014-01-01 00:00:00",
+        "date_modified": "2014-01-01 00:00:00"
+    }
   }
 ]

@@ -61,3 +61,6 @@ class Character(models.Model):
     full_biography = models.TextField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.name

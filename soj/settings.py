@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'rpg_auth',
     'world',
     'characters',
+    'quests',
 )
 
 MIDDLEWARE_CLASSES = (

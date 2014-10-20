@@ -40,3 +40,17 @@ class Location(BaseWorldModel):
     A location is a place in the world. They can be home towns, or the location of quests.
     """
     continent = models.ForeignKey(Continent)
+
+    @property
+    def current_quests(self):
+        """
+        References the reverse relation of quests.
+        """
+        return self.quest_set.filter(questlocation__date_departed__isnull=True)
+
+    @property
+    def former_quests(self):
+        """
+        Returns the former quests from a location.
+        """
+        return self.quest_set.filter(questlocation__date_departed__isnull=False)
