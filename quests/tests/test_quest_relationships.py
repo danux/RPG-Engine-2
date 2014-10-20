@@ -97,16 +97,18 @@ class QuestToCharacterRelationshipTestCase(TestCase):
         self.quest1 = Quest.objects.create(name='Quest 1', slug='quest-1')
         self.quest2 = Quest.objects.create(name='Quest 2', slug='quest-2')
 
-        self.character1 = CharacterUtils.create_character(get_user_model().objects.create_user(
+        self.user1 = get_user_model().objects.create_user(
             pen_name='Test User 1',
             email="test1@example.com",
-            password="password")
+            password="password"
         )
+        self.character1 = CharacterUtils.create_character(self.user1)
         self.character2 = CharacterUtils.create_character(get_user_model().objects.create_user(
             pen_name='Test User 2',
             email="test2@example.com",
-            password="password")
-        )
+            password="password"
+        ))
+        self.character3 = CharacterUtils.create_character(self.user1)
 
     def test_character_can_join_quests(self):
         """
@@ -132,3 +134,34 @@ class QuestToCharacterRelationshipTestCase(TestCase):
         """
         self.quest1.add_character(self.character1)
         self.assertRaises(IntegrityError, self.quest1.add_character, self.character1)
+
+    def test_character_profile_can_get_available_characters(self):
+        """
+        A method must be available on the character profile model that returns
+        characters not currently on a quest.
+        """
+        self.quest1.add_character(self.character1)
+        self.quest1.add_character(self.character3)
+        self.quest1.remove_character(self.character3)
+        self.assertEquals(list(self.user1.character_profile.available_characters), [self.character3])
+
+    def test_character_is_available_after_leaving_quest(self):
+        """
+        A method must be available on the character profile model that returns
+        characters not currently on a quest.
+        """
+        self.quest1.add_character(self.character1)
+        self.quest1.remove_character(self.character1)
+        self.assertEquals(
+            list(self.user1.character_profile.available_characters), [self.character1, self.character3]
+        )
+
+    def test_character_knows_current_quest(self):
+        """
+        Tests that a character know its current quest.
+        """
+        self.assertIsNone(self.character1.current_quest)
+        self.quest1.add_character(self.character1)
+        self.assertEquals(self.character1.current_quest, self.quest1)
+        self.quest1.remove_character(self.character1)
+        self.assertIsNone(self.character1.current_quest)

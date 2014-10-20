@@ -3,7 +3,9 @@
 Characters are owned by users and participate within the game.
 """
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from world.models import Race, Location
 
@@ -33,6 +35,13 @@ class CharacterProfile(models.Model):
         """
         return self.character_count < self.slots
 
+    @property
+    def available_characters(self):
+        """
+        Returns characters not currently on quests.
+        """
+        return self.character_set.filter_available()
+
 
 def create_character_profile(sender, **kwargs):
     """
@@ -45,6 +54,19 @@ def create_character_profile(sender, **kwargs):
     if kwargs['created']:
         CharacterProfile.objects.create(user=kwargs['instance'])
 post_save.connect(create_character_profile, sender=settings.AUTH_USER_MODEL)
+
+
+class CharacterManager(models.Manager):
+    """
+    Manager methods for characters.
+    """
+    def filter_available(self):
+        """
+        Returns characters not currently on a quest.
+        """
+        return self.filter(
+            Q(questcharacter__date_departed__isnull=False) | Q(questcharacter__isnull=True)
+        )
 
 
 class Character(models.Model):
@@ -62,5 +84,18 @@ class Character(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
+    objects = CharacterManager()
+
     def __unicode__(self):
         return self.name
+
+    @property
+    def current_quest(self):
+        """
+        Returns the characters current quest
+        :return: Quest
+        """
+        try:
+            return self.quest_set.get(questcharacter__date_departed__isnull=True)
+        except ObjectDoesNotExist:
+            return None
