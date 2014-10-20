@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'soj_auth',
+    'rpg_auth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,4 +87,4 @@ STATIC_URL = '/static/'
 
 # Authentication
 
-AUTH_USER_MODEL = 'soj_auth.SojUser'
+AUTH_USER_MODEL = 'rpg_auth.RpgUser'

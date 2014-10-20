@@ -8,6 +8,6 @@ from django.contrib import admin
 
 urlpatterns = patterns(
     '',
-    url(r'^auth/', include('soj_auth.urls', namespace='soj_auth')),
+    url(r'^auth/', include('rpg_auth.urls', namespace='rpg_auth')),
     url(r'^admin/', include(admin.site.urls)),
 )

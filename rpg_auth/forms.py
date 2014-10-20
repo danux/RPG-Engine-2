@@ -4,6 +4,7 @@ Forms for the auth app.
 """
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext as _
 
 
 class UserCreateForm(forms.ModelForm):
@@ -32,9 +33,22 @@ class UserCreateForm(forms.ModelForm):
         password2 = cleaned_data.get('password2', None)
         if password != password2 and (password is not None and password2 is not None):
             # Passwords do not match, raise error
-            msg = u'Your passwords did not match.'
+            msg = _(u'Your passwords did not match.')
             self._errors["password"] = self.error_class([msg])
             self._errors["password2"] = self.error_class([msg])
             del cleaned_data['password']
             del cleaned_data['password2']
         return cleaned_data
+
+    def save(self, commit=True):
+        """
+        Saves the user.
+
+        :param commit: Whether or not to commit. This parameter has no affect.
+        :type commit: bool
+        """
+        user = get_user_model().objects.create_user(
+            email=self.cleaned_data['email'],
+            password=self.cleaned_data['password'],
+        )
+        return user
