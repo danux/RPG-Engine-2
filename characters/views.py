@@ -51,7 +51,7 @@ class CharacterCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         """
         If the form is valid create the character and ensure it belongs to the correct user.
-        :param form: CharacterCreateForm
+        :type form: CharacterCreateForm
         """
         self.object = form.save(commit=False)
         self.object.character_profile = self.request.user.character_profile
