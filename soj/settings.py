@@ -90,3 +90,5 @@ STATIC_URL = '/static/'
 # Authentication
 
 AUTH_USER_MODEL = 'rpg_auth.RpgUser'
+
+LOGIN_URL = 'rpg_auth:login'

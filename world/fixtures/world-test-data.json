@@ -1,0 +1,47 @@
+[
+  {
+    "model": "world.Race",
+    "pk": 1,
+    "fields": {
+        "name": "Elf",
+        "slug": "elf",
+        "description": "A woodland race with pointy ears",
+        "date_created": "2014-01-01 00:00:00",
+        "date_modified": "2014-01-01 00:00:00"
+    }
+  },
+  {
+    "model": "world.Continent",
+    "pk": 1,
+    "fields": {
+        "name": "Continent One",
+        "slug": "continent-one",
+        "description": "The first continent",
+        "date_created": "2014-01-01 00:00:00",
+        "date_modified": "2014-01-01 00:00:00"
+    }
+  },
+  {
+    "model": "world.Continent",
+    "pk": 2,
+    "fields": {
+        "name": "Continent Two",
+        "slug": "continent-two",
+        "description": "The second continent",
+        "date_created": "2014-01-01 00:00:00",
+        "date_modified": "2014-01-01 00:00:00"
+    }
+  },
+  {
+    "model": "world.Location",
+    "pk": 1,
+    "fields": {
+        "name": "Location One",
+        "slug": "location-one",
+        "description": "The first location on Continent One",
+        "continent": 1,
+        "date_created": "2014-01-01 00:00:00",
+        "date_modified": "2014-01-01 00:00:00"
+    }
+  }
+]
