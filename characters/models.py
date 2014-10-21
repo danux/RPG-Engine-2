@@ -60,6 +60,18 @@ class CharacterManager(models.Manager):
     """
     Manager methods for characters.
     """
+    def filter_active(self):
+        """
+        Filters characters currently on a quest.
+        """
+        return self.filter(questcharacter__date_departed__isnull=True)
+
+    def filter_departed(self):
+        """
+        Excludes characters currently on a quest.
+        """
+        return self.filter(questcharacter__date_departed__isnull=False)
+
     def filter_available(self):
         """
         Returns characters not currently on a quest.

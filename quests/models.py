@@ -39,7 +39,7 @@ class Quest(BaseWorldModel):
         Gets the current Location by the one with the most recent date_created.
         """
         try:
-            return self.questlocation_set.get(date_departed__isnull=True)
+            return self.questlocation_set.get_active()
         except ObjectDoesNotExist:
             return None
 
@@ -50,54 +50,60 @@ class Quest(BaseWorldModel):
         :type location: Location
         """
         current_quest_location = self.current_quest_location
-
         if current_quest_location is not None:
             if location == current_quest_location.location:
-                # If the new location is the same as the current location
-                # raise an error
                 raise IntegrityError()
             current_quest_location.date_departed = timezone.now()
             current_quest_location.save()
-        QuestLocation.objects.create(
-            quest=self,
-            location=location,
-        )
-
-    def add_character(self, character):
-        """
-        Adds a character to a quest.
-        """
-        if character in self.current_characters:
-            raise IntegrityError('Character is already on quest')
-        QuestCharacter.objects.create(
-            quest=self,
-            character=character,
-        )
-
-    def remove_character(self, character):
-        """
-        Removes a characters from a quest.
-        """
-        quest_character = self.questcharacter_set.get(
-            date_departed__isnull=True,
-            character=character,
-        )
-        quest_character.date_departed = timezone.now()
-        quest_character.save()
+        QuestLocation.objects.create(quest=self, location=location)
 
     @property
     def current_characters(self):
         """
         Gets characters currently on the quest.
         """
-        return self.characters.filter(questcharacter__date_departed__isnull=True)
+        return self.characters.filter_active()
 
     @property
     def former_characters(self):
         """
         Gets characters that have left the quest.
         """
-        return self.characters.exclude(questcharacter__date_departed__isnull=True)
+        return self.characters.filter_departed()
+
+    def add_character(self, character):
+        """
+        Adds a character to a quest.
+        """
+        if character in self.current_characters:
+            raise IntegrityError('Character is already on a quest')
+        QuestCharacter.objects.create(quest=self, character=character)
+
+    def remove_character(self, character):
+        """
+        Removes a characters from a quest.
+        """
+        quest_character = self.questcharacter_set.get_active_for_character(character=character)
+        quest_character.date_departed = timezone.now()
+        quest_character.save()
+
+
+class BaseQuestRelationManager(models.Manager):
+    """
+    Manager for BaseQuestRelation and its subclasses.
+    """
+    def get_active_for_character(self, character):
+        """
+        Returns active object for a character.
+        :type character: Character
+        """
+        return self.get(date_departed__isnull=True, character=character)
+
+    def get_active(self):
+        """
+        Gets a single active instance.
+        """
+        return self.get(date_departed__isnull=True)
 
 
 class BaseQuestRelation(models.Model):
@@ -107,6 +113,8 @@ class BaseQuestRelation(models.Model):
     quest = models.ForeignKey(Quest)
     date_created = models.DateTimeField(auto_now_add=True)
     date_departed = models.DateTimeField(null=True, blank=True)
+
+    objects = BaseQuestRelationManager()
 
     class Meta(object):
         """
