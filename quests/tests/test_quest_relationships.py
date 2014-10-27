@@ -26,7 +26,8 @@ class QuestToLocationRelationshipTestCase(TestCase):
         super(QuestToLocationRelationshipTestCase, self).setUp()
         self.location1 = Location.objects.get(pk=1)
         self.location2 = Location.objects.get(pk=2)
-        self.quest = Quest.objects.create(name='Quest')
+        self.user = get_user_model().objects.create(email='test@example.com', pen_name='Test')
+        self.quest = Quest.objects.create(title=u'Quest', gm=self.user)
 
     def test_quest_can_be_in_location(self):
         """
@@ -59,9 +60,9 @@ class QuestToLocationRelationshipTestCase(TestCase):
         """
         A location knows the quests that are currently taking places there.
         """
-        quest1 = Quest.objects.create(name='Quest 1', slug='quest-1')
-        quest2 = Quest.objects.create(name='Quest 2', slug='quest-2')
-        quest3 = Quest.objects.create(name='Quest 3', slug='quest-3')
+        quest1 = Quest.objects.create(title=u'Quest 1', gm=self.user)
+        quest2 = Quest.objects.create(title=u'Quest 2', gm=self.user)
+        quest3 = Quest.objects.create(title=u'Quest 3', gm=self.user)
         quest1.move_to_location(self.location1)
         quest2.move_to_location(self.location1)
         quest3.move_to_location(self.location1)
@@ -73,9 +74,9 @@ class QuestToLocationRelationshipTestCase(TestCase):
         """
         A location knows the quests that are currently taking places there.
         """
-        quest1 = Quest.objects.create(name='Quest 1', slug='quest-1')
-        quest2 = Quest.objects.create(name='Quest 2', slug='quest-2')
-        quest3 = Quest.objects.create(name='Quest 3', slug='quest-3')
+        quest1 = Quest.objects.create(title='Quest 1', slug='quest-1', gm=self.user)
+        quest2 = Quest.objects.create(title='Quest 2', slug='quest-2', gm=self.user)
+        quest3 = Quest.objects.create(title='Quest 3', slug='quest-3', gm=self.user)
         quest1.move_to_location(self.location1)
         quest1.move_to_location(self.location2)
         quest2.move_to_location(self.location1)
@@ -95,8 +96,10 @@ class QuestToCharacterRelationshipTestCase(TestCase):
     def setUp(self):
         super(QuestToCharacterRelationshipTestCase, self).setUp()
 
-        self.quest1 = Quest.objects.create(name='Quest 1', slug='quest-1')
-        self.quest2 = Quest.objects.create(name='Quest 2', slug='quest-2')
+        user = get_user_model().objects.create(pen_name='test', email='test@example.com')
+
+        self.quest1 = Quest.objects.create(title='Quest 1', slug='quest-1', gm=user)
+        self.quest2 = Quest.objects.create(title='Quest 2', slug='quest-2', gm=user)
 
         self.user1 = get_user_model().objects.create_user(
             pen_name='Test User 1',

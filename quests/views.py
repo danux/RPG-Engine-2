@@ -3,12 +3,10 @@
 Views related to questing.
 """
 from braces.views import LoginRequiredMixin
-from django.views.generic import CreateView
-
-from characters.mixins import CharacterFromRequestMixin
+from characters.mixins import CharacterFromRequestMixin, NoAvailableCharactersMixin
 from characters.views import CharacterListView
+from django.views.generic import CreateView, DetailView
 from quests.forms import CreateQuestModelForm
-from quests.mixins import NoAvailableCharactersMixin
 from quests.models import Quest
 from world.mixins import LocationFromRequestMixin
 from world.views import ContinentListView
@@ -34,15 +32,47 @@ class SelectCharacterListView(NoAvailableCharactersMixin, LocationFromRequestMix
         return self.request.user.character_profile.available_characters
 
 
-class QuestCreateView(NoAvailableCharactersMixin, CharacterFromRequestMixin, LocationFromRequestMixin, CreateView):
+class QuestCreateView(LoginRequiredMixin, NoAvailableCharactersMixin, CharacterFromRequestMixin,
+                      LocationFromRequestMixin, CreateView):
     """
     Once a user has selected a location and a character they may create a quest.
     """
     model = Quest
     form_class = CreateQuestModelForm
 
+    def __init__(self):
+        super(QuestCreateView, self).__init__()
+        self.object = None
+
     def get_character_queryset(self):
         """
         Limits the queryset to just the user's characters
         """
         return self.request.user.character_profile.available_characters
+
+    def form_valid(self, form):
+        """
+        Adds the character and the location to the quest.
+        :type form: CreateQuestModelForm
+        :return: HttpResponse
+        """
+        self.object = form.save(commit=False)
+        self.object.gm = self.request.user
+        self.object.save()
+
+        self.object.move_to_location(self.get_location())
+        self.object.add_character(self.get_character())
+        return super(QuestCreateView, self).form_valid(form)
+
+    def get_success_url(self):
+        """
+        Redirects to the newly created quest.
+        """
+        return self.object.get_absolute_url()
+
+
+class QuestDetailView(DetailView):
+    """
+    Details a quest
+    """
+    model = Quest

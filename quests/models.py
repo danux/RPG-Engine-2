@@ -3,9 +3,13 @@
 Models for the quests app. These models serve as the heart of the game mechanics, drawing
 on all other apps to create the game.
 """
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 from django.db import models, IntegrityError
+from django.db.transaction import TransactionManagementError
 from django.utils import timezone
+from django.utils.text import slugify
 from characters.models import Character
 from world.models import BaseWorldModel, Location
 
@@ -20,7 +24,8 @@ class Quest(BaseWorldModel):
 
     This information is all tracked and dislayed to the user in the style of a timeline.
     """
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
+    gm = models.ForeignKey(settings.AUTH_USER_MODEL)
     locations = models.ManyToManyField(Location, through='QuestLocation')
     characters = models.ManyToManyField(Character, through='QuestCharacter')
 
@@ -90,6 +95,36 @@ class Quest(BaseWorldModel):
         quest_character = self.questcharacter_set.get_active_for_character(character=character)
         quest_character.date_departed = timezone.now()
         quest_character.save()
+
+    def get_absolute_url(self):
+        """
+        Absolute URL to the quest
+        """
+        return reverse('quests:quest_detail', kwargs={'slug': self.slug})
+
+    def create_slug(self, slug):
+        """
+        Tries to find an available slug.
+        :type slug: unicode
+        """
+        try:
+            self.__class__.objects.get(slug=slug)
+        except self.__class__.DoesNotExist:
+            return slug
+        else:
+            return self.create_slug('-{0}'.format(slug))
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        """
+        Overrides the save method. If no slug is set, the title will be sluggified.
+        :type force_insert: bool
+        :type force_update: bool
+        :type using: Database
+        :type update_fields: [] | ()
+        """
+        if self.slug == '':
+            self.slug = self.create_slug(slugify(self.title))
+        return super(Quest, self).save(force_insert, force_update, using, update_fields)
 
 
 class BaseQuestRelationManager(models.Manager):

@@ -50,3 +50,23 @@ class CharacterFromRequestMixin(object):
         context_data = super(CharacterFromRequestMixin, self).get_context_data(**kwargs)
         context_data['character'] = self.get_character()
         return context_data
+
+
+class NoAvailableCharactersMixin(object):
+    """
+    Mixin that checks if a user has available characters and renders to a special
+    template if they don't.
+    """
+    no_characters_template_name = u'characters/no_characters_available.html'
+
+    def get_template_names(self):
+        """
+        If the user has available characters provide a template to select a character
+        otherwise show a different templates.
+
+        :return: unicode
+        """
+        if self.request.user.character_profile.has_available_characters:
+            return super(NoAvailableCharactersMixin, self).get_template_names()
+        else:
+            return self.no_characters_template_name

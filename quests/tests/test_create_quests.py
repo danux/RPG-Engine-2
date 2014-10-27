@@ -2,14 +2,16 @@
 """
 Tests process for creating a quest.
 """
+from braces.views import LoginRequiredMixin
 from django import forms
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView
 from mock import patch, PropertyMock
+from characters.mixins import NoAvailableCharactersMixin
 from characters.models import Character
 from characters.tests.utils import CharacterUtils
 from characters.views import CharacterListView
-from quests.mixins import NoAvailableCharactersMixin
+from quests.models import Quest
 from rpg_auth.tests.utils import CreateUserMixin
 from world.mixins import LocationFromRequestMixin
 from world.models import Location
@@ -52,7 +54,7 @@ class SelectLocationTestCase(CreateUserMixin):
         """
         patched_available_characters.return_value.count.return_value = 0
         response = self.client.get(reverse('quests:select_location'))
-        self.assertTemplateUsed(response, 'quests/no_characters_available.html')
+        self.assertTemplateUsed(response, 'characters/no_characters_available.html')
 
 
 class SelectCharacterTestCase(CreateUserMixin):
@@ -102,7 +104,7 @@ class SelectCharacterTestCase(CreateUserMixin):
         """
         patched_has_available_characters.return_value = False
         response = self.client.get(reverse('quests:select_character', kwargs={'location_slug': self.location_1.slug}))
-        self.assertTemplateUsed(response, 'quests/no_characters_available.html')
+        self.assertTemplateUsed(response, 'characters/no_characters_available.html')
 
 
 class CreateQuestTestCase(CreateUserMixin):
@@ -131,6 +133,7 @@ class CreateQuestTestCase(CreateUserMixin):
         self.assertTrue(issubclass(response.context['view'].__class__, CreateView))
         self.assertTrue(issubclass(response.context['view'].__class__, NoAvailableCharactersMixin))
         self.assertTrue(issubclass(response.context['view'].__class__, LocationFromRequestMixin))
+        self.assertTrue(issubclass(response.context['view'].__class__, LoginRequiredMixin))
         self.assertTemplateUsed(response, 'quests/quest_form.html')
         self.assertEquals(response.context['location'], self.location_1)
         self.assertEquals(response.context['character'], self.character_1)
@@ -172,3 +175,41 @@ class CreateQuestTestCase(CreateUserMixin):
             )
         )
         self.assertEquals(response.status_code, 404)
+
+    def test_creating_a_quest_sets_characters_and_location(self):
+        """
+        When a quest is created the logged in user should be set as the GM.
+        """
+        valid_data = {
+            'title': u'Title 1',
+            'description': u'Description 1',
+            'first_post': u'This is the first post',
+        }
+        response = self.client.post(
+            reverse(
+                'quests:create_quest',
+                kwargs={'location_slug': self.location_1.slug, 'character_pk': self.character_1.pk},
+            ),
+            data=valid_data,
+            follow=True,
+        )
+        quest = Quest.objects.get(pk=1)
+        self.assertRedirects(response, quest.get_absolute_url())
+        self.assertTrue(self.character_1 in quest.current_characters)
+        self.assertEqual(self.location_1, quest.current_location)
+
+
+class QuestDetailViewTestCase(CreateUserMixin):
+    """
+    Tests that there is a detail view for quests.
+    """
+    fixtures = ['world-test-data.json']
+
+    def test_detail_view_renders(self):
+        """
+        It should be possible to view a quest.
+        """
+        quest = Quest.objects.create(title=u'title', description=u'description', slug=u'slug', gm=self.user)
+        response = self.client.get(reverse('quests:quest_detail', kwargs={'slug': quest.slug},))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['object'], quest)

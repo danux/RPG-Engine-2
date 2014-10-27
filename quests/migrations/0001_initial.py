@@ -2,12 +2,14 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
         ('characters', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('world', '0001_initial'),
     ]
 
@@ -21,7 +23,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(max_length=100)),
+                ('title', models.CharField(unique=True, max_length=100)),
             ],
             options={
                 'abstract': False,
@@ -60,6 +62,12 @@ class Migration(migrations.Migration):
             model_name='quest',
             name='characters',
             field=models.ManyToManyField(to='characters.Character', through='quests.QuestCharacter'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='quest',
+            name='gm',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
