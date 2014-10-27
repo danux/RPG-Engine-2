@@ -10,6 +10,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
+from mock import PropertyMock, patch
 from characters.tests.utils import CharacterUtils
 from quests.models import Quest
 from world.models import Location
@@ -165,3 +166,14 @@ class QuestToCharacterRelationshipTestCase(TestCase):
         self.assertEquals(self.character1.current_quest, self.quest1)
         self.quest1.remove_character(self.character1)
         self.assertIsNone(self.character1.current_quest)
+
+    @patch('characters.models.CharacterProfile.available_characters', new_callable=PropertyMock)
+    def test_character_profile_knows_if_has_available(self, patched_available_characters):
+        """
+        There should be a boolean on the character profile to return True if
+        the user has available characters.
+        """
+        patched_available_characters.return_value.count.return_value = 1
+        self.assertTrue(self.user1.character_profile.has_available_characters)
+        patched_available_characters.return_value.count.return_value = 0
+        self.assertFalse(self.user1.character_profile.has_available_characters)

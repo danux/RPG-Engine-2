@@ -42,6 +42,13 @@ class CharacterProfile(models.Model):
         """
         return self.character_set.filter_available()
 
+    @property
+    def has_available_characters(self):
+        """
+        Returns True if the user has available characters.
+        """
+        return True if self.available_characters.count() > 0 else False
+
 
 def create_character_profile(sender, **kwargs):
     """
