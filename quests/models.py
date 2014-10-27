@@ -74,6 +74,8 @@ class Quest(BaseWorldModel):
     def add_character(self, character):
         """
         Adds a character to a quest.
+
+        :type character: Character
         """
         if character in self.current_characters:
             raise IntegrityError('Character is already on a quest')
@@ -82,6 +84,8 @@ class Quest(BaseWorldModel):
     def remove_character(self, character):
         """
         Removes a characters from a quest.
+
+        :type character: Character
         """
         quest_character = self.questcharacter_set.get_active_for_character(character=character)
         quest_character.date_departed = timezone.now()
