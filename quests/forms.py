@@ -3,7 +3,7 @@
 Forms for interacting with quests.
 """
 from django import forms
-from quests.models import Quest
+from quests.models import Quest, Post
 
 
 class CreateQuestModelForm(forms.ModelForm):
@@ -18,3 +18,15 @@ class CreateQuestModelForm(forms.ModelForm):
         """
         fields = ['title', 'description']
         model = Quest
+
+
+class CreatePostModelForm(forms.ModelForm):
+    """
+    Form used for creating posts.
+    """
+    class Meta(object):
+        """
+        Meta properties
+        """
+        fields = ['character', 'content']
+        model = Post

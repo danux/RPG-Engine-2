@@ -5,8 +5,9 @@ Characters are owned by users and participate within the game.
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.db.models.signals import post_save
+from managers import PassThroughManager
 from world.models import Race, Location
 
 
@@ -63,7 +64,7 @@ def create_character_profile(sender, **kwargs):
 post_save.connect(create_character_profile, sender=settings.AUTH_USER_MODEL)
 
 
-class CharacterManager(models.Manager):
+class CharacterManager(QuerySet):
     """
     Manager methods for characters.
     """
@@ -87,6 +88,13 @@ class CharacterManager(models.Manager):
             Q(questcharacter__date_departed__isnull=False) | Q(questcharacter__isnull=True)
         )
 
+    def filter_by_character_profile(self, character_profile):
+        """
+        Returns characters matching the given character profile.
+        :type character_profile: CharacterProfile
+        """
+        return self.filter(character_profile=character_profile)
+
 
 class Character(models.Model):
     """
@@ -103,7 +111,7 @@ class Character(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
-    objects = CharacterManager()
+    objects = PassThroughManager.for_queryset_class(CharacterManager)()
 
     def __unicode__(self):
         return self.name
