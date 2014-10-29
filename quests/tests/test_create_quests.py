@@ -11,7 +11,7 @@ from characters.mixins import NoAvailableCharactersMixin
 from characters.models import Character
 from characters.tests.utils import CharacterUtils
 from characters.views import CharacterListView
-from quests.models import Quest
+from quests.models import Quest, Post
 from rpg_auth.tests.utils import CreateUserMixin
 from world.mixins import LocationFromRequestMixin
 from world.models import Location
@@ -176,14 +176,34 @@ class CreateQuestTestCase(CreateUserMixin):
         )
         self.assertEquals(response.status_code, 404)
 
-    def test_creating_a_quest_sets_characters_and_location(self):
+    def test_quests_have_initialise_method(self):
+        """
+        Quests should have an initialise method that sets the character, location
+        and the GM.
+        """
+        quest = Quest(title=u'Title', description=u'description')
+        quest.initialise(
+            gm=self.user.quest_profile,
+            first_post=u'first post',
+            location=self.location_1,
+            character=self.character_1,
+        )
+        self.assertEquals(quest.gm, self.user.quest_profile)
+        self.assertTrue(self.character_1 in quest.current_characters)
+        self.assertEqual(self.location_1, quest.current_location)
+        post = Post.objects.get(pk=1)
+        self.assertEquals(self.character_1, post.character)
+        self.assertEquals(self.location_1, post.location)
+        self.assertEquals(u'first post', post.content)
+
+    def test_creating_a_quest_sets_first_post_characters_and_location(self):
         """
         When a quest is created the logged in user should be set as the GM.
         """
         valid_data = {
             'title': u'Title 1',
             'description': u'Description 1',
-            'first_post': u'This is the first post',
+            'first_post': u'first post',
         }
         response = self.client.post(
             reverse(
@@ -195,8 +215,14 @@ class CreateQuestTestCase(CreateUserMixin):
         )
         quest = Quest.objects.get(pk=1)
         self.assertRedirects(response, quest.get_absolute_url())
+        self.assertEquals(quest.gm, self.user.quest_profile)
         self.assertTrue(self.character_1 in quest.current_characters)
         self.assertEqual(self.location_1, quest.current_location)
+        post = Post.objects.get(pk=1)
+        self.assertEquals(quest, post.quest)
+        self.assertEquals(self.character_1, post.character)
+        self.assertEquals(self.location_1, post.location)
+        self.assertEquals(u'first post', post.content)
 
 
 class QuestDetailViewTestCase(CreateUserMixin):
@@ -209,7 +235,9 @@ class QuestDetailViewTestCase(CreateUserMixin):
         """
         It should be possible to view a quest.
         """
-        quest = Quest.objects.create(title=u'title', description=u'description', slug=u'slug', gm=self.user)
+        quest = Quest.objects.create(
+            title=u'title', description=u'description', slug=u'slug', gm=self.user.quest_profile
+        )
         response = self.client.get(reverse('quests:quest_detail', kwargs={'slug': quest.slug},))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['object'], quest)

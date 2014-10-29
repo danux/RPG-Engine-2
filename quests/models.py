@@ -7,11 +7,31 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models, IntegrityError
-from django.db.transaction import TransactionManagementError
+from django.db.models.signals import post_save
 from django.utils import timezone
 from django.utils.text import slugify
 from characters.models import Character
 from world.models import BaseWorldModel, Location
+
+
+class QuestProfile(models.Model):
+    """
+    Quest profiles link users to quests.
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='quest_profile')
+
+
+def create_quest_profile(sender, **kwargs):
+    """
+    Catches users being created and creates a quest profile for the user.
+
+    :type sender: RpgUser
+    :type kwargs: {}
+    """
+    del sender
+    if kwargs['created']:
+        QuestProfile.objects.create(user=kwargs['instance'])
+post_save.connect(create_quest_profile, sender=settings.AUTH_USER_MODEL)
 
 
 class Quest(BaseWorldModel):
@@ -25,7 +45,7 @@ class Quest(BaseWorldModel):
     This information is all tracked and dislayed to the user in the style of a timeline.
     """
     title = models.CharField(max_length=100, unique=True)
-    gm = models.ForeignKey(settings.AUTH_USER_MODEL)
+    gm = models.ForeignKey(QuestProfile)
     locations = models.ManyToManyField(Location, through='QuestLocation')
     characters = models.ManyToManyField(Character, through='QuestCharacter')
 
@@ -47,6 +67,20 @@ class Quest(BaseWorldModel):
             return self.questlocation_set.get_active()
         except ObjectDoesNotExist:
             return None
+
+    def initialise(self, gm, first_post, location, character):
+        """
+        Initialises a new quest, setting the location, first character and first post.
+        :type gm: QuestProfile
+        :type first_post: unicode
+        :type location: Location
+        :type character: Character
+        """
+        self.gm = gm
+        self.save()
+        self.move_to_location(location)
+        self.add_character(character)
+        Post.objects.create(quest=self, character=character, content=first_post, location=location)
 
     def move_to_location(self, location):
         """
@@ -174,3 +208,15 @@ class QuestCharacter(BaseQuestRelation):
     Holds the relationship between quests and characters.
     """
     character = models.ForeignKey(Character)
+
+
+class Post(models.Model):
+    """
+    Model representing a post on a quest. A quest is made up of posts.
+    """
+    content = models.TextField()
+    quest = models.ForeignKey(Quest, related_name='posts')
+    character = models.ForeignKey(Character, related_name='posts')
+    location = models.ForeignKey(Location, related_name='posts')
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)

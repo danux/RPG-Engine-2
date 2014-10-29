@@ -8,7 +8,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('characters', '0001_initial'),
+        ('characters', '0002_auto_20141020_2128'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('world', '0001_initial'),
     ]
@@ -58,6 +58,16 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='QuestProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('user', models.OneToOneField(related_name=b'quest_profile', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
         migrations.AddField(
             model_name='quest',
             name='characters',
@@ -67,7 +77,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quest',
             name='gm',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(to='quests.QuestProfile'),
             preserve_default=True,
         ),
         migrations.AddField(

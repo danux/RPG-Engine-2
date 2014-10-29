@@ -57,11 +57,12 @@ class QuestCreateView(LoginRequiredMixin, NoAvailableCharactersMixin, CharacterF
         :return: HttpResponse
         """
         self.object = form.save(commit=False)
-        self.object.gm = self.request.user
-        self.object.save()
-
-        self.object.move_to_location(self.get_location())
-        self.object.add_character(self.get_character())
+        self.object.initialise(
+            gm=self.request.user.quest_profile,
+            first_post=form.cleaned_data['first_post'],
+            location=self.get_location(),
+            character=self.get_character(),
+        )
         return super(QuestCreateView, self).form_valid(form)
 
     def get_success_url(self):
