@@ -91,6 +91,17 @@ class PostCreateView(LoginRequiredMixin, QuestFromRequestMixin, CreateView):
         super(PostCreateView, self).__init__()
         self.object = None
 
+    def get_template_names(self):
+        """
+        Returns an alternative template if the user has no character on the quest.
+        """
+        if self.get_quest().current_characters.filter_by_character_profile(
+            character_profile=self.request.user.character_profile
+        ).count() > 0:
+            return super(PostCreateView, self).get_template_names()
+        else:
+            return 'quests/no_characters_on_quest.html'
+
     def get_form(self, form_class):
         """
         Limits the choices the character field to just characters that this user has.

@@ -8,9 +8,9 @@ from characters.models import Character
 
 class CharacterFromRequestMixin(object):
     """
-    Loads the location specified by location_slug and adds it to the context.
+    Loads the character specified by character_slug and adds it to the context.
 
-    If the location is invalid then a 404 is raised.
+    If the character is invalid then a 404 is raised.
     """
     character_queryset = Character.objects.all()
 

@@ -34,6 +34,17 @@ def create_quest_profile(sender, **kwargs):
 post_save.connect(create_quest_profile, sender=settings.AUTH_USER_MODEL)
 
 
+class QuestManager(models.Manager):
+    """
+    Manager the Quest model.
+    """
+    def get_current_quest(self):
+        """
+        The current quest is the one that has not been departed.
+        """
+        return self.get(questcharacter__date_departed__isnull=True)
+
+
 class Quest(BaseWorldModel):
     """
     Quests are collections of posts that describe the actions of characters in the world.
@@ -46,8 +57,10 @@ class Quest(BaseWorldModel):
     """
     title = models.CharField(max_length=100, unique=True)
     gm = models.ForeignKey(QuestProfile)
-    locations = models.ManyToManyField(Location, through='QuestLocation')
-    characters = models.ManyToManyField(Character, through='QuestCharacter')
+    locations = models.ManyToManyField(Location, through='QuestLocation', related_name='quests')
+    characters = models.ManyToManyField(Character, through='QuestCharacter', related_name='quests')
+
+    objects = QuestManager()
 
     @property
     def current_location(self):

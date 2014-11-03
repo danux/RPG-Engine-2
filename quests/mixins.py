@@ -8,9 +8,9 @@ from quests.models import Quest
 
 class QuestFromRequestMixin(object):
     """
-    Loads the location specified by quest_slug and adds it to the context.
+    Loads the quest specified by quest_slug and adds it to the context.
 
-    If the location is invalid then a 404 is raised.
+    If the quest is invalid then a 404 is raised.
     """
     quest_queryset = Quest.objects.all()
 

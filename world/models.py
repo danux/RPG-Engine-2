@@ -46,11 +46,11 @@ class Location(BaseWorldModel):
         """
         References the reverse relation of quests.
         """
-        return self.quest_set.filter(questlocation__date_departed__isnull=True)
+        return self.quests.filter(questlocation__date_departed__isnull=True)
 
     @property
     def former_quests(self):
         """
         Returns the former quests from a location.
         """
-        return self.quest_set.filter(questlocation__date_departed__isnull=False)
+        return self.quests.filter(questlocation__date_departed__isnull=False)

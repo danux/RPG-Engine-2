@@ -123,6 +123,6 @@ class Character(models.Model):
         :return: Quest
         """
         try:
-            return self.quest_set.get(questcharacter__date_departed__isnull=True)
+            return self.quests.get_current_quest()
         except ObjectDoesNotExist:
             return None
