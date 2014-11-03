@@ -1,4 +1,4 @@
-# -*- coding: utf -*-
+# -*- coding: utf-8 -*-
 """
 Characters are owned by users and participate within the game.
 """
@@ -48,7 +48,7 @@ class CharacterProfile(models.Model):
         """
         Returns True if the user has available characters.
         """
-        return True if self.available_characters.count() > 0 else False
+        return self.available_characters.count() > 0
 
 
 def create_character_profile(sender, **kwargs):
