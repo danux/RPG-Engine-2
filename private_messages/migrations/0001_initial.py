@@ -40,8 +40,8 @@ class Migration(migrations.Migration):
                 ('message', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
-                ('message_thread', models.ForeignKey(to='private_messages.MessageThread')),
-                ('sender', models.ForeignKey(related_name=b'sent_messages', to='private_messages.MessageProfile')),
+                ('message_thread', models.ForeignKey(related_name=b'messages', to='private_messages.MessageThread')),
+                ('sender', models.ForeignKey(to='private_messages.MessageProfile')),
             ],
             options={
             },
