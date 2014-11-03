@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Views related to questing.
-"""
-from braces.views import LoginRequiredMixin
-from characters.mixins import CharacterFromRequestMixin, NoAvailableCharactersMixin
-from characters.views import CharacterListView
-from django.views.generic import CreateView, DetailView
-from quests.forms import CreateQuestModelForm, CreatePostModelForm
-from quests.mixins import QuestFromRequestMixin
-from quests.models import Quest, Post
-from world.mixins import LocationFromRequestMixin
-from world.views import ContinentListView
+from django.shortcuts import render
 
 
 class SelectLocationListView(LoginRequiredMixin, NoAvailableCharactersMixin, ContinentListView):
