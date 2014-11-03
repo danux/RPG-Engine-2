@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'world',
     'characters',
     'quests',
+    'private_messages',
 )
 
 MIDDLEWARE_CLASSES = (
