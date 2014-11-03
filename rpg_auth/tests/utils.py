@@ -12,9 +12,9 @@ class CreateUserMixin(TestCase):
     """
     def setUp(self):
         self.user = get_user_model().objects.create_user(
-            pen_name=u'Pen Name',
-            password=u'password',
-            email=u'test@example.com',
+            pen_name='Pen Name',
+            password='password',
+            email='test@example.com',
             is_active=True,
         )
         self.client.login(username=self.user.email, password='password')

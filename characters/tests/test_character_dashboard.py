@@ -42,9 +42,9 @@ class CharacterDashboardTestCase(CreateUserMixin):
         Only the logged in user's characters should be shown.
         """
         second_user = get_user_model().objects.create_user(
-            pen_name=u'Pen Name 2',
-            password=u'password',
-            email=u'test 2@example.com',
+            pen_name='Pen Name 2',
+            password='password',
+            email='test 2@example.com',
             is_active=True,
         )
         other_character = CharacterUtils.create_character(second_user)

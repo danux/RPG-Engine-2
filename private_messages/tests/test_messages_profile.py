@@ -14,18 +14,18 @@ class PrivateMessageModelTestCase(CreateUserMixin):
     def setUp(self):
         super(PrivateMessageModelTestCase, self).setUp()
         self.user2 = get_user_model().objects.create_user(
-            pen_name=u'User 2',
-            password=u'password',
-            email=u'user_2@example.com',
+            pen_name='User 2',
+            password='password',
+            email='user_2@example.com',
             is_active=True,
         )
         self.user3 = get_user_model().objects.create_user(
-            pen_name=u'User 3',
-            password=u'password',
-            email=u'user_3@example.com',
+            pen_name='User 3',
+            password='password',
+            email='user_3@example.com',
             is_active=True,
         )
-        self.message_text = u'Test message'
+        self.message_text = 'Test message'
 
     def test_can_send_message_to_user(self):
         """

@@ -2,6 +2,7 @@
 """
 Mixins that can be used for classes that need some default character behaviour.
 """
+from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 from characters.models import Character
 
@@ -57,7 +58,7 @@ class NoAvailableCharactersMixin(object):
     Mixin that checks if a user has available characters and renders to a special
     template if they don't.
     """
-    no_characters_template_name = u'characters/no_characters_available.html'
+    no_characters_template_name = 'characters/no_characters_available.html'
 
     def get_template_names(self):
         """

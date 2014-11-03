@@ -3,4 +3,3 @@ mock==1.0.1
 django-braces==1.4.0
 freezegun==0.2.2
 django-model-utils==2.2
-sphinx==1.2.3

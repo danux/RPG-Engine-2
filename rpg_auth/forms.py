@@ -2,6 +2,7 @@
 """
 Forms for the auth app.
 """
+from __future__ import unicode_literals
 from django import forms
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext as _
@@ -33,7 +34,7 @@ class UserCreateForm(forms.ModelForm):
         password2 = cleaned_data.get('password2', None)
         if password != password2 and (password is not None and password2 is not None):
             # Passwords do not match, raise error
-            msg = _(u'Your passwords did not match.')
+            msg = _('Your passwords did not match.')
             self._errors["password"] = self.error_class([msg])
             self._errors["password2"] = self.error_class([msg])
             del cleaned_data['password']

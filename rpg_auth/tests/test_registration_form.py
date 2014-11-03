@@ -21,10 +21,10 @@ class RegistrationTestCaseStub(TestCase):
     def setUp(self):
         super(RegistrationTestCaseStub, self).setUp()
         self.valid_data = {
-            'pen_name': u'Pen Name',
-            'email': u'test@example.com',
-            'password': u'test-password',
-            'password2': u'test-password',
+            'pen_name': 'Pen Name',
+            'email': 'test@example.com',
+            'password': 'test-password',
+            'password2': 'test-password',
         }
 
 
@@ -54,7 +54,7 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.valid_data.__delitem__('pen_name')
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertEquals(response.status_code, 200)
-        self.assertFormError(response, 'form', 'pen_name', u'This field is required.')
+        self.assertFormError(response, 'form', 'pen_name', 'This field is required.')
 
     def test_not_providing_an_email_address_raises_error(self):
         """
@@ -63,7 +63,7 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.valid_data.__delitem__('email')
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertEquals(response.status_code, 200)
-        self.assertFormError(response, 'form', 'email', u'This field is required.')
+        self.assertFormError(response, 'form', 'email', 'This field is required.')
 
     def test_not_providing_a_password_raises_an_error(self):
         """
@@ -72,7 +72,7 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.valid_data.__delitem__('password')
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertEquals(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password', u'This field is required.')
+        self.assertFormError(response, 'form', 'password', 'This field is required.')
 
     def test_not_supplying_a_password2_raises_an_error(self):
         """
@@ -81,7 +81,7 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.valid_data.__delitem__('password2')
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertEquals(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password2', u'This field is required.')
+        self.assertFormError(response, 'form', 'password2', 'This field is required.')
 
     def test_not_supplying_a_matching_password2_raises_an_error(self):
         """
@@ -90,8 +90,8 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.valid_data['password2'] = 'different-password'
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertEquals(response.status_code, 200)
-        self.assertFormError(response, 'form', 'password', u'Your passwords did not match.')
-        self.assertFormError(response, 'form', 'password2', u'Your passwords did not match.')
+        self.assertFormError(response, 'form', 'password', 'Your passwords did not match.')
+        self.assertFormError(response, 'form', 'password2', 'Your passwords did not match.')
 
     def test_if_valid_data_supplied_a_user_is_created(self):
         """
@@ -145,7 +145,7 @@ class SendingWelcomeEmailTestCase(RegistrationTestCaseStub):
         user.send_welcome_email(request=MocKRequest())
         self.assertEquals(len(mail.outbox), 1)
         email = mail.outbox[0]
-        self.assertEquals(email.subject, u'Welcome to SoJ!')
+        self.assertEquals(email.subject, 'Welcome to SoJ!')
         self.assertEquals(email.to[0], 'test@example.com')
 
     @patch('rpg_auth.models.RpgUser.generate_activation_key')
@@ -212,5 +212,5 @@ class ActivationProcessTestCase(TestCase):
         self.assertTrue(user.is_active)
         self.assertEquals(len(mail.outbox), 1)
         email = mail.outbox[0]
-        self.assertEquals(email.subject, u'Your account has been activated!')
+        self.assertEquals(email.subject, 'Your account has been activated!')
         self.assertEquals(email.to[0], self.user.email)

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Quest views.
+"""
+from __future__ import unicode_literals
 from braces.views import LoginRequiredMixin
 from django.views.generic import CreateView, DetailView
 from characters.mixins import NoAvailableCharactersMixin, CharacterFromRequestMixin
@@ -14,14 +18,14 @@ class SelectLocationListView(LoginRequiredMixin, NoAvailableCharactersMixin, Con
     """
     Users ContinentListView to allow a user to select a location to quest in.
     """
-    template_name = u'quests/select_location.html'
+    template_name = 'quests/select_location.html'
 
 
 class SelectCharacterListView(NoAvailableCharactersMixin, LocationFromRequestMixin, CharacterListView):
     """
     Allows a user to select a character for a quest.
     """
-    template_name = u'quests/select_character.html'
+    template_name = 'quests/select_character.html'
 
     def get_queryset(self):
         """

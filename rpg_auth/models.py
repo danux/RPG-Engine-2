@@ -2,6 +2,7 @@
 """
 Authentication models.
 """
+from __future__ import unicode_literals
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.sites.shortcuts import get_current_site
@@ -103,7 +104,7 @@ class RpgUser(AbstractBaseUser):
         context = {
             'user': self,
         }
-        self.email_user(request, _(u'Welcome to SoJ!'), u'rpg_auth/email/activation_email.txt', context)
+        self.email_user(request, _('Welcome to SoJ!'), 'rpg_auth/email/activation_email.txt', context)
 
     def activate(self, request):
         """
@@ -117,7 +118,7 @@ class RpgUser(AbstractBaseUser):
         }
         self.email_user(
             request,
-            _(u'Your account has been activated!'),
-            u'rpg_auth/email/account_activated_email.txt',
+            _('Your account has been activated!'),
+            'rpg_auth/email/account_activated_email.txt',
             context,
         )
