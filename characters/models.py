@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q, QuerySet
 from django.db.models.signals import post_save
-from managers import PassThroughManager
+from model_utils.managers import PassThroughManager
 from world.models import Race, Location
 
 
