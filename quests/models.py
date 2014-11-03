@@ -19,6 +19,24 @@ class QuestProfile(models.Model):
     Quest profiles link users to quests.
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='quest_profile')
+    following_quests = models.ManyToManyField('Quest', related_name='followers')
+
+    def follow_quest(self, quest):
+        """
+        Adds the given quest to the following_quests M2M if the user is not already
+        following the quest.
+
+        :type quest: Quest
+        """
+        self.following_quests.add(quest)
+
+    def unfollow_quest(self, quest):
+        """
+        Unfollows the given quest.
+
+        :type quest: Quest
+        """
+        self.following_quests.remove(quest)
 
 
 def create_quest_profile(sender, **kwargs):
@@ -80,6 +98,7 @@ class Quest(BaseWorldModel):
         self.save()
         self.move_to_location(location)
         self.add_character(character)
+        self.gm.follow_quest(self)
         Post.objects.create(quest=self, character=character, content=first_post, location=location)
 
     def move_to_location(self, location):

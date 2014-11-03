@@ -3,7 +3,8 @@
 URLs for the characters app.
 """
 from django.conf.urls import patterns, url
-from quests.views import SelectLocationListView, SelectCharacterListView, QuestCreateView, QuestDetailView
+from quests.views import SelectLocationListView, SelectCharacterListView, QuestCreateView, QuestDetailView, \
+    FollowQuestFormView, UnfollowQuestFormView
 
 
 urlpatterns = patterns(
@@ -23,5 +24,15 @@ urlpatterns = patterns(
         r'^(?P<slug>[\w-]+)/$',
         QuestDetailView.as_view(),
         name='quest_detail'
+    ),
+    url(
+        r'^(?P<quest_slug>[\w-]+)/follow/$',
+        FollowQuestFormView.as_view(),
+        name='follow_quest'
+    ),
+    url(
+        r'^(?P<quest_slug>[\w-]+)/unfollow/$',
+        UnfollowQuestFormView.as_view(),
+        name='unfollow_quest'
     ),
 )
