@@ -92,10 +92,13 @@ class UserCanCreateAccountTestCase(RegistrationTestCaseStub):
         self.assertFormError(response, 'form', 'password', 'Your passwords did not match.')
         self.assertFormError(response, 'form', 'password2', 'Your passwords did not match.')
 
-    def test_if_valid_data_supplied_a_user_is_created(self):
+    @patch('celery.Celery')
+    @patch('tasks.queue_send_mail.delay')
+    def test_if_valid_data_supplied_a_user_is_created(self, patched_delay, patched_celery):
         """
         If valid data is provided a user is created.
         """
+        del patched_delay, patched_celery
         response = self.client.post(reverse('rpg_auth:register'), data=self.valid_data)
         self.assertRedirects(response, reverse('rpg_auth:register_confirmation'))
         user = get_user_model().objects.get(email=self.valid_data['email'])
