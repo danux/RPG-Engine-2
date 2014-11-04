@@ -3,10 +3,11 @@
 Celery tasks used to process non-time critical jobs.
 """
 from celery import Celery
+from django.conf import settings
 from django.core.mail import send_mail
 
 
-app = Celery('tasks', broker='amqp://guest@localhost//')
+app = Celery('tasks', broker=settings.CELERY_BROKER)
 
 
 @app.task

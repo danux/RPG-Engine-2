@@ -94,3 +94,5 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'rpg_auth.RpgUser'
 
 LOGIN_URL = 'rpg_auth:login'
+
+CELERY_BROKER = 'amqp://guest@localhost//'
