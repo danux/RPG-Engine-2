@@ -10,7 +10,7 @@ Play-by-Post RPG for the modern web
 Pretty standard Django 1.7 application.
 
 ```
-git clone git@github.com:danux/RPG-Engine-2.git
+git clone https://github.com/danux/RPG-Engine-2.git
 pip install -r requirements.txt
 ```
 
@@ -29,9 +29,8 @@ from soj.settings_development import *
 Then run the tests
 
 ```
-python manage.py test
+python manage.py test --settings=soj.{your-settings-module>}
 ```
-
 
 ### Celery
 
