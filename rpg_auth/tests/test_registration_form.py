@@ -2,12 +2,10 @@
 """
 Tests for the the registration form.
 """
-from django.core.mail import send_mail
 from mock import patch
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.core import mail
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
@@ -126,6 +124,7 @@ class SendingWelcomeEmailTestCase(RegistrationTestCaseStub):
         Once a user has an activation key it can be emailed to them.
         """
         del patched_celery
+
         class MocKRequest(object):
             """
             Mock request with valid is_secure method.
