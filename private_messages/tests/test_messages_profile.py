@@ -57,7 +57,7 @@ class PrivateMessageModelTestCase(CreateUserMixin):
             self.user.message_profile.send_message(
                 message_profile=self.user2.message_profile, message=self.message_text
             )
-        threads = self.user.message_profile.get_message_threads()
+        threads = self.user.message_profile.message_threads
         self.assertEquals(threads.count(), 2)
 
         self.assertEquals(threads[0].message_count, 2)

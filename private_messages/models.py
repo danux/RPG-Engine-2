@@ -30,7 +30,8 @@ class MessageProfile(models.Model):
             message=message
         )
 
-    def get_message_threads(self):
+    @property
+    def message_threads(self):
         """
         Returns a user's message threads. A message thread is message aggregates by the sender.
         """
@@ -109,7 +110,7 @@ class PrivateMessageManager(models.Manager):
         :type message: unicode
         :return: list[MessageProfile]
         """
-        # See if there is currently a thread for the receiver.
+        # The receiver's version
         receiver_thread, _ = to_message_profile.threads.get_or_create(other_message_profile=from_message_profile)
         received_message = self.create(
             sender=from_message_profile,

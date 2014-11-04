@@ -2,6 +2,7 @@
 """
 Tests for the the registration form.
 """
+from django.core.mail import send_mail
 from mock import patch
 
 from django import forms
@@ -118,10 +119,13 @@ class SendingWelcomeEmailTestCase(RegistrationTestCaseStub):
         user.generate_activation_key()
         self.assertEquals(user.activation_key, 'demo-uuid')
 
-    def test_user_can_be_sent_activation_email(self):
+    @patch('celery.Celery')
+    @patch('tasks.queue_send_mail.delay')
+    def test_user_can_be_sent_activation_email(self, patched_delay, patched_celery):
         """
         Once a user has an activation key it can be emailed to them.
         """
+        del patched_celery
         class MocKRequest(object):
             """
             Mock request with valid is_secure method.
@@ -143,10 +147,7 @@ class SendingWelcomeEmailTestCase(RegistrationTestCaseStub):
 
         user = get_user_model()(activation_key='activation-key', email='test@example.com')
         user.send_welcome_email(request=MocKRequest())
-        self.assertEquals(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEquals(email.subject, 'Welcome to SoJ!')
-        self.assertEquals(email.to[0], 'test@example.com')
+        self.assertEquals(patched_delay.call_count, 1)
 
     @patch('rpg_auth.models.RpgUser.generate_activation_key')
     @patch('rpg_auth.models.RpgUser.send_welcome_email')
@@ -202,15 +203,15 @@ class ActivationProcessTestCase(TestCase):
         response = self.client.get(reverse('rpg_auth:activation', kwargs={'activation_key': self.uuid}))
         self.assertEquals(response.status_code, 404)
 
-    def test_posting_to_activation_activates_user(self):
+    @patch('celery.Celery')
+    @patch('tasks.queue_send_mail.delay')
+    def test_posting_to_activation_activates_user(self, patched_delay, patched_celery):
         """
         A post to activation view will activate the user.
         """
+        del patched_celery
         response = self.client.post(reverse('rpg_auth:activation', kwargs={'activation_key': self.uuid}))
         self.assertRedirects(response, reverse('rpg_auth:activation_confirmation'))
         user = get_user_model().objects.get(pk=self.user.pk)
         self.assertTrue(user.is_active)
-        self.assertEquals(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEquals(email.subject, 'Your account has been activated!')
-        self.assertEquals(email.to[0], self.user.email)
+        self.assertEquals(patched_delay.call_count, 1)

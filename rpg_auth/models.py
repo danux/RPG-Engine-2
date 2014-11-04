@@ -6,11 +6,11 @@ from __future__ import unicode_literals
 import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
+from tasks import queue_send_mail
 
 
 class RpgUserManager(BaseUserManager):
@@ -93,7 +93,7 @@ class RpgUser(AbstractBaseUser):
         context['protocol'] = 'https' if request.is_secure() else 'http',
 
         message = render_to_string(template, context)
-        send_mail(subject, message, from_email, [self.email], **kwargs)
+        queue_send_mail.delay(subject, message, from_email, [self.email], **kwargs)
 
     def send_welcome_email(self, request):
         """
