@@ -6,6 +6,23 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Count, Max
 from django.db.models.signals import post_save
+from django.template.loader import render_to_string
+from notifications.models import Notification
+
+
+class MessageNotification(Notification):
+    """
+    A message notification informs a user there is a new message in a thread.
+    """
+    private_message = models.ForeignKey('PrivateMessage')
+
+    def render(self):
+        """
+        Renders the notification.
+        """
+        return render_to_string(
+            'private_messages/notifications/message_notification.html', {'private_message': self.private_message}
+        )
 
 
 class MessageProfile(models.Model):
@@ -24,11 +41,23 @@ class MessageProfile(models.Model):
 
         :rtype: list[PrivateMessage]
         """
-        return PrivateMessage.objects.create_private_message(
+        received_message, sent_message = PrivateMessage.objects.create_private_message(
             from_message_profile=self,
             to_message_profile=message_profile,
             message=message
         )
+        try:
+            message_notification = self.user.notification_profile.unseen_notifications().get(
+                messagenotification__private_message__message_thread=received_message.message_thread
+            )
+        except Notification.DoesNotExist:
+            self.user.notification_profile.send_notification(
+                MessageNotification, private_message=received_message
+            )
+        else:
+            message_notification.private_message = received_message
+            message_notification.save()
+        return received_message, sent_message
 
     @property
     def message_threads(self):

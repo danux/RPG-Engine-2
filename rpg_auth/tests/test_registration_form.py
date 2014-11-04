@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from rpg_auth.views import UserCreateView
+from soj.tests.utils import MockRequest
 
 
 class RegistrationTestCaseStub(TestCase):
@@ -127,28 +128,8 @@ class SendingWelcomeEmailTestCase(RegistrationTestCaseStub):
         Once a user has an activation key it can be emailed to them.
         """
         del patched_celery
-
-        class MocKRequest(object):
-            """
-            Mock request with valid is_secure method.
-            """
-
-            @staticmethod
-            def is_secure():
-                """
-                Returns true.
-                """
-                return True
-
-            @staticmethod
-            def get_host():
-                """
-                Returns true.
-                """
-                return 'host'
-
         user = get_user_model()(activation_key='activation-key', email='test@example.com')
-        user.send_welcome_email(request=MocKRequest())
+        user.send_welcome_email(request=MockRequest())
         self.assertEquals(patched_delay.call_count, 1)
 
     @patch('rpg_auth.models.RpgUser.generate_activation_key')
