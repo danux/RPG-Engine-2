@@ -3,6 +3,7 @@
 A notification profile is associated to a user and provides meta data about their notifications.
 """
 from django.utils import timezone
+from freezegun import freeze_time
 from mock import patch
 from notifications.models import GenericNotification, Notification
 from rpg_auth.tests.utils import CreateUserMixin
@@ -48,7 +49,7 @@ class NotificationInheritanceTestCase(CreateUserMixin):
             self.user.notification_profile.notifications.filter_unseen().select_subclasses()
         )
 
-    @patch('notifications.models.NotificationManager.filter_unseen')
+    @patch('notifications.models.NotificationQuerySet.filter_unseen')
     def test_short_cut_to_unseen_on_profile(self, patched_filter_unseen):
         """
         The NotificationProfile should have a shortcut to the filter_unseen method.
@@ -83,3 +84,34 @@ class NotificationInheritanceTestCase(CreateUserMixin):
         self.assertEquals(
             self.user.notification_profile.notifications.all().select_subclasses()[0], generic_notification
         )
+
+
+class MarkAsSeenTestCase(CreateUserMixin):
+    """
+    Tests that a notification can be marked as read.
+    """
+    def setUp(self):
+        super(MarkAsSeenTestCase, self).setUp()
+        self.notification1 = Notification.objects.create(
+            notification_profile=self.user.notification_profile
+        )
+        self.notification2 = Notification.objects.create(
+            notification_profile=self.user.notification_profile
+        )
+
+    @freeze_time('2000-01-01T00:00:00+00:00')
+    def test_can_mark_notification_as_seen(self):
+        """
+        Tests a notification can be set as seen.
+        """
+        self.notification1.set_as_seen()
+        self.assertEquals(self.notification1.date_seen, timezone.now())
+
+    @freeze_time('2000-01-01T00:00:00+00:00')
+    @patch('notifications.models.Notification.set_as_seen')
+    def test_can_mark_query_set_as_unseen(self, mock_set_as_seen):
+        """
+        A whole queryset should be able to be set as seen.
+        """
+        self.user.notification_profile.unseen_notifications.set_as_seen()
+        self.assertEquals(mock_set_as_seen.call_count, 2)

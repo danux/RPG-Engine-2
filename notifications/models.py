@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from operator import methodcaller
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import post_save
-from model_utils.managers import InheritanceManager
+from django.utils import timezone
+from model_utils.managers import PassThroughManagerMixin, InheritanceQuerySetMixin, InheritanceManager
 
 
 class NotificationProfile(models.Model):
@@ -11,6 +13,7 @@ class NotificationProfile(models.Model):
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='notification_profile')
 
+    @property
     def unseen_notifications(self):
         """
         Returns the user's unseen notifications.
@@ -39,7 +42,11 @@ def create_notification_profile(sender, **kwargs):
 post_save.connect(create_notification_profile, sender=settings.AUTH_USER_MODEL)
 
 
-class NotificationManager(InheritanceManager):
+class PassThroughInheritanceManager(PassThroughManagerMixin, InheritanceManager):
+    pass
+
+
+class NotificationQuerySet(InheritanceQuerySetMixin):
     """
     Manages the Notification model and all its children
     """
@@ -48,6 +55,12 @@ class NotificationManager(InheritanceManager):
         Returns unseen messages.
         """
         return self.filter(date_seen__isnull=True)
+
+    def set_as_seen(self):
+        """
+        Sets all Notifications as seen.
+        """
+        map(methodcaller('set_as_seen'), self.all())
 
 
 class Notification(models.Model):
@@ -58,7 +71,14 @@ class Notification(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_seen = models.DateTimeField(null=True, blank=True, db_index=True)
 
-    objects = NotificationManager()
+    objects = PassThroughInheritanceManager.for_queryset_class(NotificationQuerySet)()
+
+    def set_as_seen(self):
+        """
+        Sets the seen date as now.
+        """
+        self.date_seen = timezone.now()
+        self.save()
 
     def render(self):
         """
