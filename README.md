@@ -26,18 +26,19 @@ User specific settings.
 from soj.settings_development import *
 ```
 
-### Celery
-
-You will need to use Celery to process sending email.
-
-That means running a message broker and setting `settings.CELERY_BROKER`
-
-```
-./celery.sh
-```
-
 Then run the tests
 
 ```
 python manage.py test
+```
+
+
+### Celery
+
+You will need to use Celery to process sending email.
+
+That means running a message broker and setting `settings.CELERY_BROKER`.
+
+```
+./celery.sh
 ```
