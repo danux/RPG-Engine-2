@@ -2,7 +2,7 @@
 """
 A notification profile is associated to a user and provides meta data about their notifications.
 """
-from mock import patch, PropertyMock
+from mock import patch
 from notifications.context_processors import unseen_notifications
 from rpg_auth.tests.utils import CreateUserMixin
 from soj.tests.utils import MockRequest

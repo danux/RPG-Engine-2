@@ -3,9 +3,7 @@
 Tests private message notifications.
 """
 from django.contrib.auth import get_user_model
-from freezegun import freeze_time
 from mock import patch
-from private_messages.models import MessageNotification, PrivateMessage
 from rpg_auth.tests.utils import CreateUserMixin
 
 
