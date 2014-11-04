@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+"""
+Notifications are sent to users by apps. They are all sent through a notification_profile.
+
+An app that wants to send notifications must implement a class that inherits from
+Notification.
+
+The sub-class can add any attributes it requires, and when sending a notification is should
+be sent as the first parameter of send_notification on NotificationProfile. The kwargs can
+be any of the attributes on the sub-class.
+
+In order to control how notifications are displayed to users a notification should have a
+render method. The render method should user render_to_string if it is to return HTML.
+"""
 from operator import methodcaller
 from django.conf import settings
 from django.db import models
@@ -24,6 +37,7 @@ class NotificationProfile(models.Model):
         """
         Adds a notification to the notification profile.
         :type notification_model: Notification
+        :param kwargs: Can be used to set any attribute values on the notification_model
         :type kwargs: {}
         """
         return notification_model.objects.create(notification_profile=self, **kwargs)
