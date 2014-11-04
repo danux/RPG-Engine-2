@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 Make a blank settings file in `soj/` and have it import the development settings.
 
-This send email to the command line and some other useful stuff.
+This sends email to the command line, sets `DEBUG` and some other useful stuff.
 
 ```
 #  -*-coding: utf-8 -*-
