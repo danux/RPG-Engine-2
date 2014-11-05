@@ -71,9 +71,6 @@ class RpgUser(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-
     objects = RpgUserManager()
 
     USERNAME_FIELD = 'email'

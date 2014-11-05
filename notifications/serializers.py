@@ -7,6 +7,8 @@ from notifications.models import Notification
 
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
+
+
     class Meta:
         model = Notification
-        fields = []
+        fields = ['id', 'date_created', 'url']

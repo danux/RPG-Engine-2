@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rpg_auth',
     'world',
     'characters',
@@ -64,7 +65,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    # "notifications.context_processors.unseen_notifications"
+    "notifications.context_processors.unseen_notifications"
 )
 
 ROOT_URLCONF = 'soj.urls'
