@@ -17,7 +17,7 @@ class SlugTestCase(TestCase):
         """
         quest = Quest.objects.create(
             title=u'Test Quest',
-            gm=get_user_model().objects.create(pen_name='test', email='test@example.com'),
+            gm=get_user_model().objects.create(pen_name='test', email='test@example.com').quest_profile,
         )
         self.assertEquals(quest.slug, 'test-quest')
 
@@ -27,10 +27,10 @@ class SlugTestCase(TestCase):
         """
         Quest.objects.create(
             title=u'Test Quest',
-            gm=get_user_model().objects.create(pen_name='test', email='test1@example.com'),
+            gm=get_user_model().objects.create(pen_name='test', email='test1@example.com').quest_profile,
         )
         quest = Quest.objects.create(
             title=u'Test  Quest',
-            gm=get_user_model().objects.create(pen_name='test2', email='test2@example.com'),
+            gm=get_user_model().objects.create(pen_name='test2', email='test2@example.com').quest_profile,
         )
         self.assertEquals(quest.slug, '-test-quest')

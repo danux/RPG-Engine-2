@@ -239,3 +239,10 @@ class Post(models.Model):
     location = models.ForeignKey(Location, related_name='posts')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        """
+        Absolute URL for post should be the quest's URL with an anchor to the post.
+        todo: Make this work with pagination
+        """
+        return '{0}#{1}'.format(self.quest.get_absolute_url(), self.pk)

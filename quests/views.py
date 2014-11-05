@@ -3,14 +3,14 @@
 Views related to questing.
 """
 from braces.views import LoginRequiredMixin
-from django.contrib import messages
-from django.forms import Form
 from characters.mixins import CharacterFromRequestMixin, NoAvailableCharactersMixin
 from characters.views import CharacterListView
-from django.views.generic import CreateView, DetailView, FormView
-from quests.forms import CreateQuestModelForm
+from django.contrib import messages
+from django.forms import Form
+from django.views.generic import FormView, CreateView, DetailView
+from quests.forms import CreateQuestModelForm, CreatePostModelForm
 from quests.mixins import QuestFromRequestMixin
-from quests.models import Quest
+from quests.models import Quest, Post
 from world.mixins import LocationFromRequestMixin
 from world.views import ContinentListView
 
@@ -129,3 +129,38 @@ class UnfollowQuestFormView(LoginRequiredMixin, QuestFromRequestMixin, FormView)
         self.request.user.quest_profile.unfollow_quest(quest=self.get_quest())
         messages.success(self.request, 'You are no longer following {0}!'.format(self.get_quest().title))
         return response
+
+
+class PostCreateView(LoginRequiredMixin, QuestFromRequestMixin, CreateView):
+    """
+    View that allows users to post to quests.
+    """
+    model = Post
+    form_class = CreatePostModelForm
+
+    def __init__(self):
+        super(PostCreateView, self).__init__()
+        self.object = None
+
+    def get_form(self, form_class):
+        """
+        Limits the choices the character field to just characters that this user has.
+
+        :type form_class: CreatePostModelForm
+        """
+        form = super(PostCreateView, self).get_form(form_class)
+        form.fields['character'].queryset = self.get_quest().current_characters.filter_by_character_profile(
+            character_profile=self.request.user.character_profile
+        )
+        return form
+
+    def form_valid(self, form):
+        """
+        Sets the location and the quest for the post
+        :type form: CreatePostModelForm
+        """
+        self.object = form.save(commit=False)
+        self.object.location = self.get_quest().current_location
+        self.object.quest = self.get_quest()
+        self.object.save()
+        return super(PostCreateView, self).form_valid(form)
