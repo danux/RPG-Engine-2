@@ -49,6 +49,16 @@ class RpgUserManager(BaseUserManager):
         """
         return self.get(activation_key=activation_key, is_active=False)
 
+    def create_superuser(self, **kwargs):
+        """
+        Creates a superuser.
+        :type kwargs: {}
+        :rtype: RpgUser
+        """
+        kwargs['is_superuser'] = True
+        kwargs['is_staff'] = True
+        return self._create_user(**kwargs)
+
 
 class RpgUser(AbstractBaseUser):
     """
@@ -60,6 +70,8 @@ class RpgUser(AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     activation_key = models.CharField(max_length=60)
     date_joined = models.DateTimeField(auto_now_add=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     objects = RpgUserManager()
 
