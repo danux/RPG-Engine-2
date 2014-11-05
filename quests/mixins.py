@@ -8,9 +8,21 @@ from quests.models import Quest
 
 class QuestFromRequestMixin(object):
     """
+<<<<<<< HEAD
     Loads the quest specified by quest_slug and adds it to the context.
 
     If the quest is invalid then a 404 is raised.
+=======
+<<<<<<< HEAD
+    Loads the quest specified by quest_slug and adds it to the context.
+
+    If the quest is invalid then a 404 is raised.
+=======
+    Loads the location specified by quest_slug and adds it to the context.
+
+    If the location is invalid then a 404 is raised.
+>>>>>>> 48b41eb49ce1f5477e1e25b89af36d332dfb3a9f
+>>>>>>> quests
     """
     quest_queryset = Quest.objects.all()
 
@@ -20,7 +32,7 @@ class QuestFromRequestMixin(object):
 
     def dispatch(self, request, *args, **kwargs):
         """
-        Adds the location to self.
+        Adds the quest to self.
         :param request: HttpRequest
         :param args: []
         :param kwargs: {}

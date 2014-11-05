@@ -57,13 +57,16 @@ class CharacterCreationFormTestCase(CreateUserMixin):
         Once a character is created the user should be taken back to the dashboard
         """
         valid_data = {
-            'name': 'Name',
+            'name': u'Name',
             'home_town': 1,
             'race': 1,
-            'physical_description': 'test',
-            'personality': 'test',
-            'skills': 'test',
-            'full_biography': 'test',
+            'physical_description': u'test',
+            'personality': u'test',
+            'skills': u'test',
+            'full_biography': u'test',
         }
         response = self.client.post(reverse('characters:create'), data=valid_data, follow=True)
         self.assertRedirects(response, reverse('characters:dashboard'))
+        message = list(response.context.get('messages'))[0]
+        self.assertEqual('{0} has entered the world!'.format(u'Name'), unicode(message.message))
+        self.assertTrue('success' in message.tags)

@@ -2,7 +2,7 @@
 """
 A notification profile is associated to a user and provides meta data about their notifications.
 """
-from mock import patch
+from mock import patch, PropertyMock
 from notifications.context_processors import unseen_notifications
 from rpg_auth.tests.utils import CreateUserMixin
 from soj.tests.utils import MockRequest
@@ -18,7 +18,7 @@ class ContextProcessorTestCase(CreateUserMixin):
         """
         A context processor should returns the user's unseen notifications.
         """
-        patched_unseen_notifications.return_value = {'test': 'test'}
+        patched_unseen_notifications.__get__ = PropertyMock(return_value={'test': 'test'})
         mock_request = MockRequest()
         mock_request.user = self.user
         self.assertEquals(unseen_notifications(mock_request), {'unseen_notifications': {'test': 'test'}})

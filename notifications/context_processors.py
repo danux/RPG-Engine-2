@@ -11,6 +11,6 @@ def unseen_notifications(request):
     :return: {}
     """
     if request.user.is_authenticated():
-        return {'unseen_notifications': request.user.notification_profile.unseen_notifications()}
+        return {'unseen_notifications': request.user.notification_profile.unseen_notifications}
     else:
         return {'unseen_notifications': []}
