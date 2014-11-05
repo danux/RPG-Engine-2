@@ -8,6 +8,10 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+<<<<<<< HEAD
+=======
+        ('characters', '0001_initial'),
+>>>>>>> quests
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('characters', '0001_initial'),
         ('world', '0001_initial'),

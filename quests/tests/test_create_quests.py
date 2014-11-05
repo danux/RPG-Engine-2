@@ -223,6 +223,9 @@ class CreateQuestTestCase(CreateUserMixin):
         self.assertEquals(self.character_1, post.character)
         self.assertEquals(self.location_1, post.location)
         self.assertEquals(u'first post', post.content)
+        message = list(response.context['messages'])[0]
+        self.assertEqual('{0} has begun!'.format(u'Title 1'), unicode(message.message))
+        self.assertTrue('success' in message.tags)
 
 
 class QuestDetailViewTestCase(CreateUserMixin):
