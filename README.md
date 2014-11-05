@@ -2,7 +2,9 @@
 
 Play-by-Post RPG for the modern web
 
-[![Build Status](https://travis-ci.org/danux/RPG-Engine-2.svg?branch=master)](https://travis-ci.org/danux/RPG-Engine-2)
+Master: [![Build Status](https://travis-ci.org/danux/RPG-Engine-2.svg?branch=master)](https://travis-ci
+.org/danux/RPG-Engine-2)
+Notifications: [![Build Status](https://travis-ci.org/danux/RPG-Engine-2.svg?branch=notifications)](https://travis-ci.org/danux/RPG-Engine-2)
 
 
 ## Setup
@@ -41,3 +43,35 @@ That means running a message broker and setting `settings.CELERY_BROKER`.
 ```
 ./celery.sh
 ```
+
+## Status Message Views
+
+Views that have confirmation messages to users.
+
+### Characters
+
+- Create character
+- Follow character
+- Unfollow character
+
+### Quests
+
+- Create quest
+- Create post
+- Join quest
+- Leave quest
+- Follow quest
+- Unfollow quest
+- Close quest
+
+### Private Messages
+
+- User blocked from sending private message
+
+
+## Followable Content
+
+Anything that can be followed, and therefore may have an influence on a timeline.
+
+- Quests (QuestProfile)
+- Characters (CharacterProfile)

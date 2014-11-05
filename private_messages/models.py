@@ -47,7 +47,7 @@ class MessageProfile(models.Model):
             message=message
         )
         try:
-            message_notification = self.user.notification_profile.unseen_notifications().get(
+            message_notification = self.user.notification_profile.unseen_notifications.get(
                 messagenotification__private_message__message_thread=received_message.message_thread
             )
         except Notification.DoesNotExist:

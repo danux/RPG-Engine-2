@@ -3,6 +3,7 @@
 Views related to managing characters.
 """
 from braces.views import LoginRequiredMixin
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.utils.functional import lazy
@@ -54,4 +55,5 @@ class CharacterCreateView(LoginRequiredMixin, CreateView):
         self.object = form.save(commit=False)
         self.object.character_profile = self.request.user.character_profile
         self.object.save()
+        messages.success(self.request, '{0} has entered the world!'.format(self.object.name))
         return super(CharacterCreateView, self).form_valid(form)
