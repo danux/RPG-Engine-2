@@ -28,7 +28,7 @@ class PrivateMessageModelTestCase(CreateUserMixin):
         received_message, _ = self.user.message_profile.send_message(
             message_profile=self.user2.message_profile, message=self.message_text
         )
-        self.assertEquals(self.user.notification_profile.unseen_notifications()[0].private_message, received_message)
+        self.assertEquals(self.user.notification_profile.unseen_notifications[0].private_message, received_message)
 
     def test_notification_not_sent_twice_if_unread_for_thread(self):
         """
@@ -41,8 +41,8 @@ class PrivateMessageModelTestCase(CreateUserMixin):
         received_message, _ = self.user.message_profile.send_message(
             message_profile=self.user2.message_profile, message=self.message_text
         )
-        self.assertEquals(self.user.notification_profile.unseen_notifications().count(), 1)
-        self.assertEquals(self.user.notification_profile.unseen_notifications()[0].private_message, received_message)
+        self.assertEquals(self.user.notification_profile.unseen_notifications.count(), 1)
+        self.assertEquals(self.user.notification_profile.unseen_notifications[0].private_message, received_message)
 
     @patch('private_messages.models.render_to_string')
     def test_notification_renders(self, mocked_render_to_string):
@@ -52,7 +52,7 @@ class PrivateMessageModelTestCase(CreateUserMixin):
         received_message, _ = self.user.message_profile.send_message(
             message_profile=self.user2.message_profile, message=self.message_text
         )
-        self.user.notification_profile.unseen_notifications()[0].render()
+        self.user.notification_profile.unseen_notifications[0].render()
         mocked_render_to_string.assert_called_once_with(
             'private_messages/notifications/message_notification.html', {'private_message': received_message}
         )

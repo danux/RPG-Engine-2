@@ -8,12 +8,8 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-<<<<<<< HEAD
-=======
         ('characters', '0001_initial'),
->>>>>>> quests
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('characters', '0001_initial'),
         ('world', '0001_initial'),
     ]
 
@@ -25,8 +21,8 @@ class Migration(migrations.Migration):
                 ('content', models.TextField()),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('date_modified', models.DateTimeField(auto_now=True)),
-                ('character', models.ForeignKey(related_name=b'posts', to='characters.Character')),
-                ('location', models.ForeignKey(related_name=b'posts', to='world.Location')),
+                ('character', models.ForeignKey(related_name='posts', to='characters.Character')),
+                ('location', models.ForeignKey(related_name='posts', to='world.Location')),
             ],
             options={
             },
@@ -80,7 +76,8 @@ class Migration(migrations.Migration):
             name='QuestProfile',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('user', models.OneToOneField(related_name=b'quest_profile', to=settings.AUTH_USER_MODEL)),
+                ('following_quests', models.ManyToManyField(related_name='followers', to='quests.Quest')),
+                ('user', models.OneToOneField(related_name='quest_profile', to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -89,7 +86,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quest',
             name='characters',
-            field=models.ManyToManyField(to='characters.Character', through='quests.QuestCharacter'),
+            field=models.ManyToManyField(related_name='quests', through='quests.QuestCharacter', to='characters.Character'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -101,13 +98,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='quest',
             name='locations',
-            field=models.ManyToManyField(to='world.Location', through='quests.QuestLocation'),
+            field=models.ManyToManyField(related_name='quests', through='quests.QuestLocation', to='world.Location'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='post',
             name='quest',
-            field=models.ForeignKey(related_name=b'posts', to='quests.Quest'),
+            field=models.ForeignKey(related_name='posts', to='quests.Quest'),
             preserve_default=True,
         ),
     ]
