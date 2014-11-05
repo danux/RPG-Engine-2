@@ -49,6 +49,7 @@ class UserCreateForm(forms.ModelForm):
         :type commit: bool
         """
         user = get_user_model().objects.create_user(
+            pen_name=self.cleaned_data['pen_name'],
             email=self.cleaned_data['email'],
             password=self.cleaned_data['password'],
         )

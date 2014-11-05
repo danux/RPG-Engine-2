@@ -24,5 +24,5 @@ class SuperUserTestCase(TestCase):
         }
         user_model.objects.create_superuser(**options)
         patched_create_user.assert_called_once_with(
-            **dict(options.items() + dict(is_superuser=True, is_staff=True).items())
+            **dict(options.items() + dict(is_superuser=True, is_staff=True, is_active=True).items())
         )

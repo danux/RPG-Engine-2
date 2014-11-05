@@ -152,7 +152,7 @@ class ActivationProcessTestCase(TestCase):
         super(ActivationProcessTestCase, self).setUp()
         self.uuid = '0482094a-584c-11e4-9331-000c29a5c706'
         self.user = get_user_model().objects.create_user(
-            activation_key=self.uuid, email='test@example.com', password='password'
+            pen_name='pen_name', activation_key=self.uuid, email='test@example.com', password='password'
         )
 
     def test_can_get_a_user_by_activation_key(self):
