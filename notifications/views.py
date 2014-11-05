@@ -3,13 +3,11 @@
 API views for notifications.
 """
 from __future__ import unicode_literals
-import json
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import detail_route
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
-from rest_framework.reverse import reverse_lazy, reverse
 from notifications.models import Notification
 from notifications.serializers import NotificationSerializer
 
@@ -31,23 +29,18 @@ class NotificationViewSet(viewsets.ViewSet):
         """
         :param request:
         :type pk: int
-        :type action: unicode
         :return:
         """
-        notification = get_object_or_404(self.get_queryset(), pk=pk)
-        data = {
-            'pk': notification.pk,
-            'render': notification.render(),
-            'set_as_seen_url': reverse_lazy(
-                'notification-set-as-seen',
-                kwargs={'pk': notification.pk},
-                request=request
-            ),
-        }
-        return Response(data)
+        try:
+            notification = get_object_or_404(self.get_queryset(), pk=int(pk))
+        except ValueError:
+            raise ParseError
+        serializer = NotificationSerializer(notification, context={'request': request})
+        return Response(serializer.data)
 
     @detail_route(methods=['post'])
     def set_as_seen(self, request, pk):
+        del request
         try:
             pk = int(pk)
         except TypeError:
