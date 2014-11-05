@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'quests',
     'private_messages',
     'notifications',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,7 +64,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    "notifications.context_processors.unseen_notifications"
+    # "notifications.context_processors.unseen_notifications"
 )
 
 ROOT_URLCONF = 'soj.urls'
@@ -108,3 +109,10 @@ AUTH_USER_MODEL = 'rpg_auth.RpgUser'
 LOGIN_URL = 'rpg_auth:login'
 
 CELERY_BROKER = 'amqp://guest@localhost//'
+
+# REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ]
+}

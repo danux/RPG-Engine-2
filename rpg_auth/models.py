@@ -61,6 +61,9 @@ class RpgUser(AbstractBaseUser):
     activation_key = models.CharField(max_length=60)
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
     objects = RpgUserManager()
 
     USERNAME_FIELD = 'email'
