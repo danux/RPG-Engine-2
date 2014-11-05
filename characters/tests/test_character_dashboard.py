@@ -14,7 +14,6 @@ class CharacterDashboardTestCase(CreateUserMixin):
     """
     Tests the form for creating a character.
     """
-
     fixtures = ['world-test-data.json']
 
     def test_character_dashboard_renders(self):
