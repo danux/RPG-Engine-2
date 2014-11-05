@@ -3,7 +3,6 @@
 Utils for quests.
 """
 import uuid
-from characters.models import Character
 from quests.models import Quest
 from world.models import Location
 

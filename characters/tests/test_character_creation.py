@@ -3,7 +3,6 @@
 Tests that user can create characters.
 """
 from django import forms
-from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.views.generic import CreateView
 from characters.tests.utils import CharacterUtils
