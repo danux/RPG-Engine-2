@@ -4,7 +4,7 @@ Quest views.
 """
 from __future__ import unicode_literals
 from braces.views import LoginRequiredMixin
-from characters.mixins import CharacterFromRequestMixin, NoAvailableCharactersMixin
+from characters.mixins import NoAvailableCharactersMixin, AvailableCharacterFromRequestMixin
 from characters.views import CharacterListView
 from django.contrib import messages
 from django.forms import Form
@@ -36,7 +36,7 @@ class SelectCharacterListView(NoAvailableCharactersMixin, LocationFromRequestMix
         return self.request.user.character_profile.available_characters
 
 
-class QuestCreateView(LoginRequiredMixin, NoAvailableCharactersMixin, CharacterFromRequestMixin,
+class QuestCreateView(LoginRequiredMixin, NoAvailableCharactersMixin, AvailableCharacterFromRequestMixin,
                       LocationFromRequestMixin, CreateView):
     """
     Once a user has selected a location and a character they may create a quest.
@@ -47,12 +47,6 @@ class QuestCreateView(LoginRequiredMixin, NoAvailableCharactersMixin, CharacterF
     def __init__(self):
         super(QuestCreateView, self).__init__()
         self.object = None
-
-    def get_character_queryset(self):
-        """
-        Limits the queryset to just the user's characters
-        """
-        return self.request.user.character_profile.available_characters
 
     def form_valid(self, form):
         """
@@ -176,3 +170,28 @@ class PostCreateView(LoginRequiredMixin, QuestFromRequestMixin, CreateView):
         self.object.quest = self.get_quest()
         self.object.save()
         return super(PostCreateView, self).form_valid(form)
+
+
+class JoinQuestFormView(LoginRequiredMixin, NoAvailableCharactersMixin, QuestFromRequestMixin,
+                        AvailableCharacterFromRequestMixin, FormView):
+    """
+    View that allows a user to join a quest.
+    """
+    form_class = Form
+    template_name = u'quests/join_quest.html'
+
+    def get_success_url(self):
+        """
+        Success URL simply returns the user to the quest.
+        """
+        return self.get_quest().get_absolute_url()
+
+    def form_valid(self, form):
+        """
+        If the form has been submitted by post then follow the quest.
+        :type form: Form
+        """
+        response = super(JoinQuestFormView, self).form_valid(form)
+        self.get_quest().add_character(character=self.get_character())
+        messages.success(self.request, '{0} has joined {1}!'.format(self.get_character().name, self.get_quest().title))
+        return response

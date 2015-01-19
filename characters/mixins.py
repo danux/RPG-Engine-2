@@ -53,6 +53,17 @@ class CharacterFromRequestMixin(object):
         return context_data
 
 
+class AvailableCharacterFromRequestMixin(CharacterFromRequestMixin):
+    """
+    Like the character from request mixin, only the character must available (not on a quest).
+    """
+    def get_character_queryset(self):
+        """
+        Limits the queryset to just the user's characters
+        """
+        return self.request.user.character_profile.available_characters
+
+
 class NoAvailableCharactersMixin(object):
     """
     Mixin that checks if a user has available characters and renders to a special
