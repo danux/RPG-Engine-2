@@ -1,7 +1,7 @@
-django==1.7.1
+django==1.7.3
 mock==1.0.1
 django-braces==1.4.0
-freezegun==0.2.2
+freezegun==0.2.8
 django-model-utils==2.2
 django-test-pep8==0.1
 pyflakes==0.8.1

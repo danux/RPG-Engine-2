@@ -14,5 +14,11 @@ app = Celery('tasks', broker=settings.CELERY_BROKER)
 def queue_send_mail(subject, message, from_email, email, **kwargs):
     """
     Allows mail to be queued for sending and taken off the request.
+
+    :type subject: unicode
+    :type message: unicode
+    :type from_email: unicode
+    :type email: unicode
+    :type kwargs: {}
     """
     send_mail(subject, message, from_email, email, **kwargs)
