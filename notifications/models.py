@@ -14,6 +14,7 @@ render method. The render method should user render_to_string if it is to return
 """
 from operator import methodcaller
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
@@ -100,6 +101,12 @@ class Notification(models.Model):
         :rtype: unicode
         """
         raise NotImplementedError('Notification must be sub-classed and you must implement a render method')
+
+    def set_as_seen_url(self):
+        """
+        Returns the URL in the API to set the notification as seen.
+        """
+        return reverse('notification-set-as-seen', kwargs={'pk': self.pk})
 
 
 class GenericNotification(Notification):

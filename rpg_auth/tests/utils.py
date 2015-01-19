@@ -11,6 +11,7 @@ class CreateUserMixin(TestCase):
     Mixin that comes with a user, ready to login and use.
     """
     def setUp(self):
+        super(CreateUserMixin, self).setUp()
         self.user = get_user_model().objects.create_user(
             pen_name='Pen Name',
             password='password',
